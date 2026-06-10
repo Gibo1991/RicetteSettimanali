@@ -2,20 +2,120 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Ricette</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
+
     <h1>📖 Gestione Ricette</h1>
 
-    <p>Pagina in costruzione</p>
+    <div class="form-container">
+
+        <input type="text" id="nomeRicetta" placeholder="Nome ricetta">
+
+        <select id="categoria">
+            <option value="Primo">Primo</option>
+            <option value="Secondo">Secondo</option>
+            <option value="Piatto Unico">Piatto Unico</option>
+            <option value="Contorno">Contorno</option>
+            <option value="Dolce">Dolce</option>
+        </select>
+
+        <textarea id="ingredienti"
+            placeholder="Un ingrediente per riga&#10;Pasta 500g&#10;Pomodoro 300g">
+        </textarea>
+
+        <button onclick="aggiungiRicetta()">
+            ➕ Aggiungi Ricetta
+        </button>
+
+    </div>
+
+    <h2>Ricette Salvate</h2>
+
+    <div id="listaRicette"></div>
 
     <a href="index.html" class="button">
         ⬅ Torna alla Home
     </a>
+
 </div>
+
+<script>
+
+let ricette = JSON.parse(localStorage.getItem("ricette")) || [];
+
+function salvaRicette() {
+    localStorage.setItem("ricette", JSON.stringify(ricette));
+}
+
+function aggiungiRicetta() {
+
+    const nome = document.getElementById("nomeRicetta").value.trim();
+    const categoria = document.getElementById("categoria").value;
+    const ingredienti = document.getElementById("ingredienti").value.trim();
+
+    if(nome === "") {
+        alert("Inserisci un nome");
+        return;
+    }
+
+    ricette.push({
+        nome,
+        categoria,
+        ingredienti
+    });
+
+    salvaRicette();
+    mostraRicette();
+
+    document.getElementById("nomeRicetta").value = "";
+    document.getElementById("ingredienti").value = "";
+}
+
+function eliminaRicetta(index) {
+
+    if(confirm("Eliminare questa ricetta?")) {
+
+        ricette.splice(index, 1);
+
+        salvaRicette();
+        mostraRicette();
+    }
+}
+
+function mostraRicette() {
+
+    const lista = document.getElementById("listaRicette");
+
+    lista.innerHTML = "";
+
+    ricette.forEach((ricetta, index) => {
+
+        lista.innerHTML += `
+            <div class="ricetta-card">
+
+                <h3>${ricetta.nome}</h3>
+
+                <p><strong>Categoria:</strong> ${ricetta.categoria}</p>
+
+                <pre>${ricetta.ingredienti}</pre>
+
+                <button onclick="eliminaRicetta(${index})">
+                    🗑 Elimina
+                </button>
+
+            </div>
+        `;
+    });
+}
+
+mostraRicette();
+
+</script>
 
 </body>
 </html>
